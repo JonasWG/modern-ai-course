@@ -641,7 +641,12 @@ def loadAgent(pacman, nographics):
     else:
         pythonPathDirs = pythonPathStr.split(';')
     pythonPathDirs.append('.')
+    
+    if not isinstance(pacman, str):
+        pacman = pacman.__name__
 
+     
+        
     for moduleDir in pythonPathDirs:
         if not os.path.isdir(moduleDir): continue
         moduleNames = [f for f in os.listdir(moduleDir) if f.endswith('gents.py')]
@@ -655,7 +660,7 @@ def loadAgent(pacman, nographics):
             if pacman in dir(module):
                 if nographics and modulename == 'keyboardAgents.py':
                     raise Exception('Using the keyboard requires graphics (not text display)')
-                return getattr(module, pacman)
+                return getattr(module, str(pacman))
     raise Exception('The agent ' + pacman + ' is not specified in any *Agents.py.')
 
 def replayGame( layout, actions, display ):

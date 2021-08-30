@@ -120,7 +120,56 @@ class BaseAgent(game.Agent):
         return ["Stop"]
 
 
-#from pacman import *
-#args = readCommand(["--pacman","BaseAgent",#"PacmanWithState",
+class ZeroIntelligent(BaseAgent):
+
+    class State:
+        def __init__(self):
+            self.actions = ["GoRight", "GoLeft", "GoForward", "GoBack"]
+
+    def choose_action(self, state):
+        action = random.choice(state.actions)
+        print("Performing action:", action)
+        return action
+    
+    
+class Intelligent(BaseAgent):
+    class State:
+        def __init__(self):
+            self.bump = False
+            self.previous_action = ""
+            self.actions = ["GoRight", "GoLeft", "GoForward", "GoBack"]
+
+        def __repr__(self):
+            if self.bump:
+                return self.previous_action + " resulted in a bump"
+            else:
+                return self.previous_action
+    
+    def update_state_with_percept(self, percept, state):
+        if percept[1] == "bump":
+            state.bump = True
+        else:
+            state.bump = False
+        return state
+
+    def choose_action(self, state):
+        actions = state.actions
+        if state.bump:
+            actions.remove(state.previous_action)
+        return random.choice(actions)
+
+    def update_state_with_action(self, action, state):
+        state.previous_action = action
+        # Print the representation (i.e. __repr__) of the state
+        print(state)
+        return state    
+    
+from pacman import *
+#args = readCommand(["--pacman","BaseAgent","PacmanWithState",
 #                    "--layout","mediumEmpty"])
+#runGames(**args)
+
+
+#args = readCommand(["--pacman", ZeroIntelligent,
+#                    "--layout", "mediumClassic.lay"])
 #runGames(**args)
